@@ -2,6 +2,7 @@ package br.com.ronistone.controller
 
 import br.com.ronistone.model.Message
 import br.com.ronistone.service.ChatService
+import br.com.ronistone.service.ClusterService
 import io.micronaut.websocket.WebSocketSession
 import io.micronaut.websocket.annotation.OnClose
 import io.micronaut.websocket.annotation.OnMessage
@@ -12,7 +13,8 @@ import org.slf4j.LoggerFactory
 
 @ServerWebSocket(value = "/chat/{username}")
 class ChatWebSocketController(
-    val chatService: ChatService
+    val chatService: ChatService,
+    val clusterService: ClusterService
 ) {
 
     val logger: Logger = LoggerFactory.getLogger(ChatWebSocketController::class.java)
@@ -20,12 +22,14 @@ class ChatWebSocketController(
     @OnOpen
     fun onOpen(username: String, session: WebSocketSession) {
         chatService.addSession(username, session)
+        clusterService.addClientToNode(username)
         logger.info("connection open $username!")
     }
 
     @OnClose
     fun onClose(username: String, session: WebSocketSession) {
         chatService.deleteSession(username)
+        clusterService.removeClientToNode(username)
         logger.info("connection closed from $username!")
     }
 

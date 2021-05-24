@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+
+package br.com.ronistone;
+
+option java_multiple_files = true;
+option java_package = "br.com.ronistone";
+option java_outer_classname = "ClusterService";
+import "google/protobuf/empty.proto";
+
+service ChatClusterService {
+    rpc sendMessage (Message) returns (google.protobuf.Empty) {}
+}
+
+message Message {
+    string subject      = 1;
+    string receiver     = 2;
+    string message      = 3;
+    MessageType type    = 4;
+
+    enum MessageType {
+        MESSAGE = 0;
+        ERROR = 1;
+        SENDED = 2;
+        READ = 3;
+    }
+}
+//message Empty{}

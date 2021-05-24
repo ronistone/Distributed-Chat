@@ -98,11 +98,6 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>io.micronaut.jaxrs</groupId>
-            <artifactId>micronaut-jaxrs-server</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>io.micronaut.kotlin</groupId>
             <artifactId>micronaut-kotlin-runtime</artifactId>
             <scope>compile</scope>
@@ -111,6 +106,14 @@
             <groupId>io.micronaut.sql</groupId>
             <artifactId>micronaut-jdbc-hikari</artifactId>
             <scope>compile</scope>
+        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>io.micronaut</groupId>-->
+<!--            <artifactId>micronaut-discovery-client</artifactId>-->
+<!--        </dependency>-->
+        <dependency>
+            <groupId>io.micronaut.redis</groupId>
+            <artifactId>micronaut-redis-lettuce</artifactId>
         </dependency>
         <dependency>
             <groupId>javax.annotation</groupId>
@@ -172,6 +175,20 @@
             <artifactId>kotlin-maven-noarg</artifactId>
             <version>${kotlin.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.micronaut.grpc</groupId>
+            <artifactId>micronaut-grpc-server-runtime</artifactId>
+<!--            <version>2.4.1-SNAPSHOT</version>-->
+        </dependency>
+        <dependency>
+            <groupId>io.micronaut.grpc</groupId>
+            <artifactId>micronaut-grpc-client-runtime</artifactId>
+<!--            <version>2.4.1-SNAPSHOT</version>-->
+        </dependency>
     </dependencies>
 
     <build>
@@ -179,6 +196,36 @@
             <plugin>
                 <groupId>io.micronaut.build</groupId>
                 <artifactId>micronaut-maven-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>com.github.os72</groupId>
+                <artifactId>protoc-jar-maven-plugin</artifactId>
+                <version>3.6.0.2</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <addProtoSources>all</addProtoSources>
+                            <includeMavenTypes>direct</includeMavenTypes>
+                            <inputDirectories>
+                                <include>src/main/proto</include>
+                            </inputDirectories>
+                            <outputTargets>
+                                <outputTarget>
+                                    <type>java</type>
+                                </outputTarget>
+                                <outputTarget>
+                                    <type>grpc-java</type>
+                                    <pluginArtifact>io.grpc:protoc-gen-grpc-java:1.17.1</pluginArtifact>
+                                </outputTarget>
+                            </outputTargets>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
@@ -243,6 +290,7 @@
                         <configuration>
                             <sourceDirs>
                                 <sourceDir>${project.basedir}/src/main/kotlin</sourceDir>
+                                <sourceDir>${project.basedir}/target/generated-sources</sourceDir>
                             </sourceDirs>
                         </configuration>
                     </execution>
